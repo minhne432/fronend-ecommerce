@@ -128,6 +128,7 @@ const confirmPurchase = async () => {
       phone_number: phone_number.value,
       address: address.value,
       items: cartItems.value.map((item) => ({
+        product_name: item.name,
         product_id: item.product_id,
         price: item.price,
         quantity: item.quantity

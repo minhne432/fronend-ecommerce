@@ -1,12 +1,13 @@
 <template>
+  <Header />
   <div class="order-details">
     <h1>Chi tiết đơn hàng</h1>
     <div class="order-info">
-      <p><strong>ID đơn hàng:</strong> DH123456</p>
-      <p><strong>Ngày đặt hàng:</strong> 01/12/2023</p>
-      <p><strong>Trạng thái:</strong> Đang xử lý</p>
-      <p><strong>Người nhận:</strong> Nguyễn Văn A</p>
-      <p><strong>Số điện thoại:</strong> 0123456789</p>
+      <p><strong>ID đơn hàng:</strong> {{ parsedData.order.id }}</p>
+      <p><strong>Thời gian đặt hàng:</strong> {{ formatOrderDate(parsedData.order.order_date) }}</p>
+      <p><strong>Trạng thái:</strong> {{ parsedData.order.status }}</p>
+      <p><strong>Người nhận:</strong> {{ parsedData.items.fullname }}</p>
+      <p><strong>Số điện thoại:</strong> {{ parsedData.items.phone_number }}</p>
     </div>
     <div class="product-details">
       <h2>Chi tiết sản phẩm</h2>
@@ -19,15 +20,10 @@
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>Iphone 13</td>
-            <td>2</td>
-            <td>$1200</td>
-          </tr>
-          <tr>
-            <td>Áo thun nam</td>
-            <td>3</td>
-            <td>$25</td>
+          <tr v-for="(item, index) in parsedData.items.items" :key="index">
+            <td>{{ item.product_name }}</td>
+            <td>{{ item.quantity }}</td>
+            <td>{{ item.price }}</td>
           </tr>
           <!-- Thêm các dòng sản phẩm khác tương tự -->
         </tbody>
@@ -39,12 +35,15 @@
 <script setup>
 import { useRoute } from 'vue-router'
 import { ref } from 'vue'
+import Header from '@/components/Header.vue'
 
 const route = useRoute()
-const parsedData = ref({})
-// Thực hiện việc truy cập dữ liệu từ query params
 const orderData = route.query.orderData
+const parsedData = ref({})
 
+const formatOrderDate = (date) => {
+  return new Date(date).toLocaleString()
+}
 // Kiểm tra và xử lý dữ liệu
 if (orderData) {
   try {

@@ -2,53 +2,59 @@
   <Header />
   <div class="order-history">
     <h1>Lịch sử đơn hàng</h1>
-    <table class="order-table">
-      <thead>
-        <tr>
-          <th>ID đơn hàng</th>
-          <th>Ngày đặt hàng</th>
-          <th>Trạng thái</th>
-          <th>Người nhận</th>
-          <th>Số điện thoại</th>
-          <th>Chi tiết sản phẩm</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="order in orders" :key="order.id">
-          <td>{{ order.id }}</td>
-          <td>{{ formatOrderDate(order.order_date) }}</td>
-          <td>{{ order.status }}</td>
-          <td>{{ order.fullname }}</td>
-          <td>{{ order.phone_number }}</td>
-          <td>
+
+    <div class="order">
+      <div class="order-header">
+        <span>ID đơn hàng</span>
+        <span>Thời gian đặt hàng</span>
+        <span>Trạng thái</span>
+
+        <span>Số điện thoại</span>
+        <span>Tổng tiền</span>
+        <span>Chi tiết sản phẩm</span>
+      </div>
+
+      <div class="order-details">
+        <div class="order-info" v-for="order in orders" :key="order.id">
+          <span>#{{ order.id }}</span>
+          <span>{{ formatOrderDate(order.order_date) }}</span>
+          <span>{{ order.status }}</span>
+
+          <span>{{ order.phone_number }}</span>
+          <span>{{ order.total_money }}</span>
+          <span>
             <button @click="showOrderDetails(order.id)">Xem chi tiết sản phẩm</button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+          </span>
+          <div class="overlay" v-if="showDetailsModal == true"></div>
+          <div v-if="showDetailsModal" class="order-details-modal">
+            <p class="centered">
+              <strong>#{{ order.id }}</strong>
+            </p>
+            <table>
+              <thead>
+                <tr>
+                  <th>Tên sản phẩm</th>
+                  <th>Giá</th>
+                  <th>Số lượng</th>
+                  <!-- Các cột thông tin khác về sản phẩm -->
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="(product, index) in orderDetails" :key="index">
+                  <td>{{ product.name }}</td>
+                  <td>{{ product.price }}</td>
+                  <td>{{ product.number_of_products }}</td>
+                  <!-- Các ô thông tin khác về sản phẩm -->
+                </tr>
+              </tbody>
+            </table>
 
-    <!-- Modal hiển thị thông tin chi tiết đơn hàng -->
+            <button @click="closeDetailsModal">Trở lại</button>
+          </div>
+        </div>
 
-    <div v-if="showDetailsModal" class="order-details-modal">
-      <table>
-        <thead>
-          <tr>
-            <th>Tên sản phẩm</th>
-            <th>Giá</th>
-            <th>Số lượng</th>
-            <!-- Các cột thông tin khác về sản phẩm -->
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(product, index) in orderDetails" :key="index">
-            <td>{{ product.name }}</td>
-            <td>{{ product.price }}</td>
-            <td>{{ product.number_of_products }}</td>
-            <!-- Các ô thông tin khác về sản phẩm -->
-          </tr>
-        </tbody>
-      </table>
-      <button @click="closeDetailsModal">Trở lại</button>
+        <!-- Thêm các thông tin đơn hàng khác ở đây (có thể sử dụng thêm class "order-info" để thêm đơn hàng mới) -->
+      </div>
     </div>
   </div>
 </template>
@@ -101,35 +107,58 @@ const showOrderDetails = async (orderId) => {
 </script>
 
 <style>
-/* CSS để căn giữa và tùy chỉnh giao diện bảng */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f4f4f4;
+}
+
 .order-history {
+  width: 80%;
+  margin: 20px auto;
+}
+
+h1 {
   text-align: center;
 }
 
-.order-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 20px;
-}
-
-.order-table th,
-.order-table td {
-  border: 1px solid #ddd;
-  padding: 8px;
-}
-
-.order-table th {
-  background-color: #f2f2f2;
-}
-
-.order-details-modal {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: white;
+.order {
+  background-color: #fff;
   padding: 20px;
-  /* Các thuộc tính khác để tạo giao diện modal */
+  margin-bottom: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.order-header {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  font-weight: bold;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+}
+
+.order-header span {
+  text-align: center;
+}
+
+.order-info {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+}
+
+.order-info span {
+  text-align: center;
+}
+
+.order-info ul {
+  padding: 0;
+}
+
+.order-info ul li {
+  list-style: none;
 }
 
 .order-details-modal {
@@ -140,51 +169,74 @@ const showOrderDetails = async (orderId) => {
   background-color: #fff;
   padding: 20px;
   border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  z-index: 9999; /* Đảm bảo modal hiển thị trên cùng */
 }
 
+/* Phần lớp phủ phía sau modal */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(51, 46, 46, 0.123); /* Màu nền với độ mờ */
+  z-index: 999; /* Đảm bảo lớp phủ hiển thị phía sau modal */
+}
+
+/* CSS cho bảng chi tiết sản phẩm */
 .order-details-modal table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 20px;
+  margin-bottom: 20px;
 }
 
 .order-details-modal th,
 .order-details-modal td {
-  border: 1px solid #ddd;
+  border: 1px solid #ccc;
   padding: 8px;
+  text-align: left;
 }
 
 .order-details-modal th {
   background-color: #f2f2f2;
 }
 
+/* CSS cho nút "Trở lại" */
 .order-details-modal button {
   padding: 10px 20px;
-  background-color: #e74c3c;
+  background-color: #007bff;
   color: #fff;
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
-  margin-top: 20px;
 }
 
 .order-details-modal button:hover {
-  background-color: #c0392b;
+  background-color: #0056b3;
 }
 
-.order-details-modal {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: #fff;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  max-width: 800px; /* Đặt max-width theo ý muốn của bạn */
-  width: 90%; /* Đặt width để có độ rộng lớn hơn khi cần thiết */
-  margin: 0 auto; /* Để căn giữa nếu width nhỏ hơn max-width */
+.order-info button {
+  padding: 8px 16px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 14px;
+  margin: 4px 2px;
+  transition-duration: 0.4s;
+}
+
+.order-info button:hover {
+  background-color: #45a049;
+  color: white;
+}
+
+.centered {
+  text-align: center;
 }
 </style>
