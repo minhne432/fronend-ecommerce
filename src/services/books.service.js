@@ -17,7 +17,7 @@ function makeBooksService() {
     const formData = new FormData()
     formData.append('image', book.image)
     formData.append('name', book.name)
-    formData.append('categoryName', book.categoryName)
+    formData.append('category_id', book.category_id)
     formData.append('price', book.price)
     formData.append('description', book.description)
     // Thêm các trường thông tin sách khác nếu cần
@@ -45,7 +45,7 @@ function makeBooksService() {
     const formData = new FormData()
     formData.append('image', book.image)
     formData.append('name', book.name)
-    formData.append('categoryName', book.categoryName)
+    formData.append('category_id', book.category_id)
     formData.append('price', book.price)
     formData.append('description', book.description)
     // Thêm các trường thông tin sách khác nếu cần

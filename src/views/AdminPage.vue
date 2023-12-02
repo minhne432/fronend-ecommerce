@@ -1,100 +1,88 @@
 <template>
-  <div class="index-container">
-    <SideBar />
-
-    <section class="home">
-      <!-- main -->
-      <div class="main">
-        <!-- search bar -->
-        <Search v-model="searchText" />
-        <!-- main menus / order -->
-        <div class="main-menus">
-
-          <!-- List of books -->
-          <div class="main-product">
-            <h2 class="main-title">Chọn sách</h2>
-            <button @click="goToAddBook">
-              <i></i> Thêm mới
-            </button>
-            <!-- product wrapper -->
-            <div class="product-wrapper">
-              <div v-for="book in filteredProducts.value" :key="book.id" class="product-list" @click="() => goToEditBook(book)">
-                <router-link :to="{
-                  name: 'book.edit',
-                  params: { id: book.id },
-                }"></router-link>
-                <img class="product-img" :src="book.thumbnail" />
-                <div class="product-desc">
-                  <div class="product-name">
-                    <h4>{{ book.name }}</h4>
-                    <p class="price">{{ book.price }}</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Pagination component -->
-          <Pagination :totalPages="totalPages" :currentPage="currentPage" :length="length"
-            @update:currentPage="handlePageChange" />
-        </div>
-      </div>
-    </section>
+  <Header />
+  <div class="search-bar">
+    <input v-model="searchText" />
+    <button id="searchButton">Tìm</button>
+    <button @click="goToAddBook"><i></i> Thêm mới</button>
   </div>
 
+  <main>
+    <section
+      class="product"
+      v-for="book in filteredProducts"
+      :key="book.id"
+      @click="() => goToEditBook(book)"
+    >
+      <img :src="book.thumbnail" alt="ảnh bìa" />
+      <h2>{{ book.name }}</h2>
+      <p><strong>Giá:</strong> {{ book.price.toLocaleString('vi-VN') }}</p>
+      <button>Chỉnh sửa</button>
+    </section>
+
+    <!-- Có thể thêm nhiều sản phẩm khác ở đây bằng cách sao chép đoạn mã section.product và chỉnh sửa thông tin -->
+  </main>
+
+  <Pagination
+    :totalPages="totalPages"
+    :currentPage="currentPage"
+    :length="length"
+    @update:currentPage="handlePageChange"
+  />
+  <footer>
+    <p>&copy; 2023 Website Bán Nước Hoa</p>
+  </footer>
 </template>
 
 <script setup>
 import { ref, computed, onMounted, watchEffect } from 'vue'
 import { useRouter } from 'vue-router'
 // attach sidebar into shopIndex
-import SideBar from '@/components/SideBar.vue'
+import Header from '@/components/Header.vue'
 import Pagination from '@/components/Pagination.vue'
-import Search from '@/components/SearchBar.vue'
 
 import booksService from '@/services/books.service'
 
-
-
 // Define the variables with `ref` if they're reactive
 const currentPage = ref(1)
-const totalPages = ref(1);
+const totalPages = ref(1)
 const length = 5
 
 const searchText = ref('')
-const books = ([])
+const books = ref([])
 
 // // Comnputed
-
-
+function goToAddBook() {
+  $router.push({ name: 'book.add' })
+}
 const searchableProducts = computed(() =>
   books.value.map((book) => {
-    const { id, name, price, thumbnail, categoryName } = book;
-    return [id, name, price, thumbnail, categoryName].join("");
+    const { id, name, price, thumbnail, categoryName } = book
+    return [id, name, price, thumbnail, categoryName].join('')
   })
-);
+)
 
 const filteredProducts = computed(() => {
   if (!searchText.value) {
     // const data = books.value;
-    const data = books;
+    const data = books.value
     console.log(data)
-    return data}
-    console.log(books.value)
-  return books.value.filter((books, index) => searchableProducts.value[index].includes(searchText.value)
-
-
-  );
-});
+    return data
+  }
+  console.log(books.value)
+  return books.value.filter((books, index) =>
+    searchableProducts.value[index].includes(searchText.value)
+  )
+})
 
 // Method
 const handlePageChange = (newPage) => {
   currentPage.value = newPage
 }
 
-const $router = useRouter();
+const $router = useRouter()
 
 const goToEditBook = (book) => {
+  console.log(book)
   $router.push({
     name: 'book.edit',
     params: { id: book.id },
@@ -102,199 +90,138 @@ const goToEditBook = (book) => {
   })
 }
 
-function goToAddBook() {
-  $router.push({ name: "book.add" });
-}
-
-
 async function retrieveBooks(page) {
   try {
-    const chunk = await booksService.getBooks(page); // Gọi API để lấy danh sách sách
+    const chunk = await booksService.getBooks(page) // Gọi API để lấy danh sách sách
     //console.log(chunk)
-    totalPages.value = chunk.metadata.lastPage ?? 1; // Cập nhật tổng số trang
+    totalPages.value = chunk.metadata.lastPage ?? 1 // Cập nhật tổng số trang
     //console.log(chunk.metadata.lastPage)
-    books.value = chunk.products; // Lưu danh sách sách từ API vào biến books
+    books.value = chunk.products // Lưu danh sách sách từ API vào biến books
     console.log(books.value)
   } catch (error) {
-    console.log(error); // Xử lý lỗi nếu có
+    console.log(error) // Xử lý lỗi nếu có
   }
 }
 
-
-
 // When this component is mounted, load the first page of contacts
-onMounted(() => retrieveBooks(1));
+onMounted(() => retrieveBooks(1))
 
 // When currentPage changes, fetch contacts for currentPage
-watchEffect(() => retrieveBooks(currentPage.value));
-
+watchEffect(() => retrieveBooks(currentPage.value))
 </script>
 
-<style>
-html {
-  scroll-behavior: smooth;
-}
-:root {
-  --primaryColor: #96c93e;
-  --secondaryColor: #ffc107;
-  --whiteColor: #fff;
-  --blackColor: #222;
-  --softGreenColor: #d9f2ee;
-  --darkGreyColor: #a7a7a7;
-  --greyColor: #f5f5f5;
-}
-.index-container {
-  width: 100%;
-  height: auto;
-  display: flex;
-}
-.main {
-  width: 100%;
-  height: max-content;
-  min-height: 100vh;
-  padding: 2%;
-  background-color: var(--softGreenColor);
+<style scoped>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-.main-navbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+body {
+  font-family: Arial, sans-serif;
+  line-height: 1.6;
+  background-color: #f4f4f4;
 }
 
-.cart {
+header {
+  background-color: #333;
+  color: #fff;
+  padding: 20px;
+  text-align: center;
+}
+
+header nav ul {
+  list-style: none;
+}
+
+header nav ul li {
+  display: inline;
+  margin-right: 20px;
+}
+
+header nav ul li a {
+  color: #fff;
+  text-decoration: none;
+}
+
+main {
+  padding: 20px;
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: var(--whiteColor);
-  font-size: 20px;
-  color: var(--primaryColor);
-  text-decoration: none;
-  padding: 0 10px;
-  height: 40px;
-  border-radius: 50%;
-}
-.cart:hover {
-  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+  flex-wrap: wrap;
 }
 
-.main-highlight {
-  margin: 3% 0;
-  padding: 2%;
-  background-color: var(--secondaryColor);
-  border-radius: 8px;
+.product {
+  margin: 20px;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  width: 300px;
 }
 
-.main-header {
-  display: flex;
-  width: 100%;
-  justify-content: space-between;
-  align-items: center;
-}
-.main-title {
-  font-size: 20px;
+.product img {
+  width: 200px;
+  height: 300px;
+  object-fit: cover;
+  border-radius: 5px;
+  margin-bottom: 10px;
 }
 
-.back,
-.next {
+.product h2 {
+  font-size: 1.5em;
+  margin-bottom: 10px;
+}
+
+button {
+  padding: 10px 20px;
+  background-color: #333;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
   cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
-.back:hover,
-.next:hover {
-  color: var(--primaryColor);
+button:hover {
+  background-color: #555;
 }
 
-.main-menus {
-  min-height: 100%;
-  height: 100%;
-  background-color: var(--greyColor);
-  padding: 2%;
-  border-radius: 8px;
+footer {
+  width: 100%;
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  padding: 20px 0;
+}
+
+/* CSS cho thanh tìm kiếm */
+.search-bar {
+  display: flex;
+  justify-content: center;
   margin-top: 20px;
 }
 
-.main-product {
-  margin: 1rem 0 1.5rem 0;
+#searchInput {
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  margin-right: 5px;
 }
 
-.product-wrapper {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  width: 100%;
-  margin-top: 1rem;
-  gap: 1%;
-  border-radius: 8px;
-}
-
-.product-list {
-  min-height: auto;
-  height: 100%;
-  background-color: var(--whiteColor);
-  border-radius: 8px;
-  margin: 1% 0;
-  box-shadow: rgba(176, 176, 176, 0.2) 0px 2px 8px 0px;
+#searchButton {
+  padding: 10px 20px;
+  background-color: #333;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
   cursor: pointer;
-  transform: translateY(20px);
-  transition:
-    opacity 0.3s,
-    transform 0.3s;
-}
-.product-list:hover {
-  box-shadow: rgba(149, 157, 165, 0.2) 0 px 8px 24px;
-  opacity: 1;
-  transform: translateY(0);
-}
-.product-img {
-  width: 100%;
-  height: auto;
-  min-height: 430px;
-  border-radius: 8px;
-  object-fit: cover;
-  object-position: center;
-  filter: brightness(0.8);
-}
-.product-desc {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  padding: 3%;
-  width: 100%;
-}
-.price {
-  color: var(--primaryColor);
-}
-.product-list:hover .product-img {
-  filter: opacity(1);
+  transition: background-color 0.3s ease;
 }
 
-.product-list:hover .product-name h4 {
-  color: var(--primaryColor);
-}
-
-.product-list:hover .price {
-  letter-spacing: 1.5px;
-}
-body::-webkit-scrollbar {
-  width: 5px;
-}
-body::-webkit-scrollbar-track {
-  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-}
-body::-webkit-scrollbar-thumb {
-  background-color: var(--primaryColor);
-  outline: 1px solid var(--primaryColor);
-}
-.home {
-  height: 100vh;
-  width: calc(100% - 240px);
-  position: relative;
-  left: 240px;
-  background: var(--body-color);
-  transition: var(--tran-05);
-}
-.sidebar.close ~ .home {
-  width: calc(100% - 88px);
-  left: 88px;
+#searchButton:hover {
+  background-color: #555;
 }
 </style>

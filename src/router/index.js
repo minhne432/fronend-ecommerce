@@ -21,7 +21,8 @@ const routes = [
   },
   {
     path: '/admin/orders',
-    component: () => import('@/views/AdminOrders.vue')
+    component: () => import('@/views/AdminOrders.vue'),
+    name: 'admin.orders'
   },
   {
     // Địa chỉ URL mặc định (gốc) của trang.

@@ -1,40 +1,54 @@
 <template>
-  <header class="header">
-    <div class="container">
-      <h1 class="logo">Bookstore</h1>
-      <nav class="navigation">
-        <ul>
-          <router-link v-if="shouldShowLink" :to="{ name: 'Home' }">
-            <li><span>Shop</span></li>
-          </router-link>
+  <nav class="menu">
+    <ul>
+      <li v-if="shouldShowLink" style="color: #fff" class="bold-text">
+        <router-link class="no-underline" :to="{ name: 'Home' }"> Trang Chủ</router-link>
+      </li>
+      <li v-else style="color: #fff" class="bold-text">
+        <router-link class="no-underline" :to="{ name: 'admin' }">Sản phẩm </router-link>
+      </li>
 
-          <li class="dropdown">
-            <span>User</span>
-            <div class="dropdown-content">
-              <router-link :to="{ name: 'cart' }"><span>Cart</span> </router-link>
-              <router-link :to="{ name: 'user.home' }"><span>Profile</span> </router-link>
-              <router-link :to="{ name: 'myOrders' }"><span>Orders</span> </router-link>
-
-              <li v-if="isLoggedIn">
-                <button @click="logout()">
-                  <i class="bx bx-log-out icon"></i>
-                  <span>Logout</span>
-                </button>
-              </li>
-
-              <li v-if="!isLoggedIn">
-                <router-link :to="{ name: 'login' }">
-                  <i class="bx bx-log-in icon"></i>
-                  <span class="text nav-text">Login</span>
-                </router-link>
-              </li>
-            </div>
-          </li>
+      <li>
+        <a class="bold-text" href="#">Thương hiệu</a>
+        <ul class="sub-menu">
+          <li><a href="#">Burberry</a></li>
+          <li><a href="#">ESCADA</a></li>
+          <li><a href="#">CAROLINA HERRERA</a></li>
         </ul>
-      </nav>
-    </div>
-  </header>
+      </li>
+      <li><a class="bold-text" href="#">Giới thiệu</a></li>
+      <li><a class="bold-text" href="#">Liên hệ</a></li>
+      <li class="login" v-if="isLoggedIn == 0">
+        <a href="#">
+          <router-link class="child" :to="{ name: 'login' }">
+            <!-- <i>Đăng nhập</i> -->
+            Đăng nhập
+          </router-link></a
+        >
+      </li>
+      <button class="custom-button" v-else @click="logout()">Đăng Xuất</button>
+      <li class="profile" v-if="isLoggedIn == 1">
+        <a href="#"
+          ><router-link :to="{ name: 'user.home' }"><span>Profile</span></router-link></a
+        >
+      </li>
+      <li class="orders" v-if="isLoggedIn == 1">
+        <a href="#"
+          ><router-link v-if="!shouldShowLink" :to="{ name: 'admin.orders' }"
+            ><span>Đơn hàng</span></router-link
+          >
+          <router-link v-else :to="{ name: 'myOrders' }"><span>Đơn hàng</span></router-link>
+        </a>
+      </li>
+      <li class="cart" v-if="isLoggedIn == 1 && shouldShowLink">
+        <a href="#"
+          ><router-link :to="{ name: 'cart' }"><span>Giỏ Hàng</span></router-link></a
+        >
+      </li>
+    </ul>
+  </nav>
 </template>
+
 <script setup>
 import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
@@ -55,137 +69,153 @@ const logout = () => {
   localStorage.removeItem('address')
   localStorage.removeItem('role_id')
   localStorage.removeItem('isLoggedIn')
-  router.push({ name: 'Home' })
+  localStorage.setItem('isLoggedIn', 0)
+  router.push({ name: 'login' })
 }
 </script>
 <style scoped>
-/* Reset CSS */
+/* Reset some default styles */
 * {
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
+  list-style: none;
 }
 
-/* Style cho header */
-.header {
-  background-color: #333; /* Màu nền */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Hiệu ứng bóng đổ */
-  padding: 10px 0; /* Khoảng cách đệm */
+/* Style for the main menu */
+.menu ul {
+  background: #333;
+  padding: 20px;
 }
 
-.container {
-  width: 90%; /* Độ rộng của header */
-  margin: 0 auto; /* Canh giữa */
-  display: ;
-  justify-content: space-between; /* Căn giữa các phần tử */
-  align-items: center;
-}
-
-.logo {
-  font-size: 24px; /* Cỡ chữ */
-  margin: 0; /* Loại bỏ khoảng cách */
-  color: #fcfbfb; /* Màu chữ */
-}
-
-.navigation ul {
-  list-style: none; /* Loại bỏ dấu đầu dòng */
-  margin-left: 80%;
-  padding: 0;
-  display: flex;
-  align-items: center;
-}
-
-.navigation ul li {
-  margin-left: 20px; /* Khoảng cách giữa các phần tử */
-  position: relative; /* Để dropdown hoạt động */
-}
-
-.navigation ul li:last-child {
-  margin-right: 0; /* Loại bỏ khoảng cách ở phần tử cuối cùng */
-}
-
-/* Style cho dropdown */
-.dropdown {
+.menu ul li {
   position: relative;
   display: inline-block;
 }
 
-.dropdown-content {
+.menu ul li a {
+  display: block;
+  padding: 10px 20px;
+  color: #fff;
+  text-decoration: none;
+}
+
+.menu ul li:hover > ul {
+  display: block;
+}
+
+/* Style for the sub-menu */
+.menu ul ul {
   display: none;
   position: absolute;
-  background-color: #333;
-  min-width: 160px;
-  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-  z-index: 1;
-  top: 100%; /* Đặt dropdown-content xuống dưới dropdown */
-  left: 0; /* Đặt dropdown-content bên trái của dropdown */
-}
-
-.dropdown:hover .dropdown-content {
-  display: block;
-}
-
-.dropdown-content a {
-  color: #fff;
-  padding: 12px 16px;
-  text-decoration: none;
-  display: block;
-}
-
-.dropdown-content li button {
-  color: #fff;
-  background-color: #333;
-  border: none;
-  padding: 12px 16px;
-  text-decoration: none;
-  display: block;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  max-width: 100%;
-}
-
-.dropdown-content li button:hover {
-  background-color: #000;
-}
-.dropdown-content a:hover {
-  background-color: #000;
-}
-
-.dropdown:hover .dropdown-content {
-  display: block;
-}
-/* Phần CSS khác */
-/* CSS cho phần chuyển hướng đến Shop */
-.navigation ul li router-link[to="{ name: 'Home' }"] {
-  /* Thêm kiểu dáng */
-  position: relative;
-}
-
-.navigation ul li router-link[to="{ name: 'Home' }"]::before {
-  /* Hiệu ứng underline */
-  content: '';
-  position: absolute;
-  bottom: -3px; /* Khoảng cách từ chữ đến đường underline */
+  top: 100%;
   left: 0;
-  width: 100%;
-  height: 2px;
-  background-color: #007bff; /* Màu underline */
-  transition: width 0.3s ease;
-  transform: scaleX(0); /* Bắt đầu với độ rộng là 0 */
+  background: #444;
 }
 
-.navigation ul li router-link[to="{ name: 'Home' }"]:hover::before {
-  /* Hiển thị underline khi hover */
-  transform: scaleX(1); /* Mở rộng underline */
+.menu ul ul li {
+  display: block;
 }
 
-span {
+.menu ul ul li a {
+  padding: 10px 30px;
+}
+
+.menu ul ul ul {
+  top: 0;
+  left: 100%;
+  background: #555;
+}
+
+.menu ul li.login {
+  float: right;
+}
+
+.menu ul li.login a {
+  background: #ffcc00; /* Màu nền của nút đăng nhập */
+  /* padding: 10px 20px; */
+
+  color: #333;
+}
+
+.menu ul li.login a:hover {
+  background: #ffdb4d; /* Màu nền khi rê chuột qua nút đăng nhập */
+}
+
+.menu ul li.profile {
+  float: right;
+}
+
+.menu ul li.profile a {
+  background: #336699; /* Màu nền của nút profile */
+  padding: 10px 20px;
   color: #fff;
 }
 
-ul {
-  margin-left: 20px; /* Di chuyển sang bên trái 20px */
-  /* Hoặc có thể sử dụng giá trị âm để di chuyển sang bên trái */
-  /* margin-left: -20px; */
+.menu ul li.profile a:hover {
+  background: #4477b2; /* Màu nền khi rê chuột qua nút profile */
+}
+
+.no-underline {
+  text-decoration: none;
+}
+
+.bold-text {
+  font-weight: bold;
+}
+
+.child {
+  width: 100%; /* Phần tử con có chiều rộng bằng với phần tử cha */
+  height: 100%; /* Phần tử con có chiều cao bằng với phần tử cha */
+}
+
+.menu ul li.cart {
+  float: right;
+}
+
+.menu ul li.cart a {
+  background: #ff6600; /* Màu nền của nút giỏ hàng */
+  padding: 10px 20px;
+  color: #fff;
+}
+
+.menu ul li.cart a:hover {
+  background: #ff8533; /* Màu nền khi rê chuột qua nút giỏ hàng */
+}
+
+.custom-button {
+  padding: 10px 20px; /* Kích thước của button */
+  background-color: #3498db; /* Màu nền của button */
+  color: #fff; /* Màu chữ */
+  border: none; /* Xóa viền */
+  border-radius: 5px; /* Bo tròn góc */
+  cursor: pointer; /* Biến con trỏ thành hình bàn tay khi di chuột vào */
+  font-size: 16px; /* Kích thước chữ */
+}
+
+.custom-button:hover {
+  background-color: #2980b9; /* Màu nền khi rê chuột qua */
+}
+
+.menu ul {
+  display: flex; /* Sử dụng flexbox */
+  justify-content: flex-end; /* Đặt các phần tử về phía bên phải */
+}
+
+.menu ul li {
+  margin-left: 10px; /* Khoảng cách giữa các mục */
+}
+
+.menu ul li.orders {
+  float: right;
+}
+
+.menu ul li.orders a {
+  background: #ff9900; /* Màu nền của mục quản lý đơn hàng */
+  padding: 10px 20px;
+  color: #fff;
+}
+
+.menu ul li.orders a:hover {
+  background: #ffad33; /* Màu nền khi rê chuột qua mục quản lý đơn hàng */
 }
 </style>

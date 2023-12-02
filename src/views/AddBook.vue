@@ -1,40 +1,34 @@
 <script setup>
-import { ref } from "vue";
+import { ref } from 'vue'
 
-import BookForm from "@/components/BookForm.vue";
-import booksService from "@/services/books.service";
-import SideBar from '@/components/SideBar.vue';
+import BookForm from '@/components/BookForm.vue'
+import booksService from '@/services/books.service'
+import Header from '@/components/Header.vue'
 
-const book = ref(null);
-const message = ref("");
-
-
+const book = ref(null)
+const message = ref('')
 
 async function onAddBook(newBook) {
   try {
-await booksService.createBook(newBook);
+    await booksService.createBook(newBook)
 
-    message.value = "Sách được thêm thành công.";
+    message.value = 'Sách được thêm thành công.'
   } catch (error) {
-    console.log(error);
+    console.log(error)
   }
 }
-
-
-
 </script>
 
 <template>
-  <SideBar />
+  <Header />
   <div class="page">
-    <h4>Thêm Sách</h4>
+    <h4>Nhập thông tin sản phẩm cần thêm</h4>
     <BookForm :initial-book="book || {}" @submit:book="onAddBook" />
     <p>{{ message }}</p>
   </div>
 </template>
 
 <style>
-
 .page {
   max-width: 600px;
   margin: 0 auto;
@@ -43,6 +37,7 @@ await booksService.createBook(newBook);
   border-radius: 5px;
   background-color: #fff;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-top: 50px;
 }
 
 .page h4 {

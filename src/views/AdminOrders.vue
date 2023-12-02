@@ -35,14 +35,12 @@
       </tbody>
     </table>
   </div>
-  <Footer />
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
 
 import Header from '@/components/Header.vue'
-import Footer from '@/components/Footer.vue'
 
 const orders = ref([])
 
@@ -94,38 +92,28 @@ async function updateStatus(order) {
 </script>
 
 
-<style>
+<style scoped>
 /* CSS cho trang quản lý đơn hàng */
-/* Thiết lập font và margin, padding mặc định */
-body {
-  font-family: Arial, sans-serif;
-  margin: 0;
-  padding: 0;
-}
-
-/* Định dạng phần tiêu đề */
+/* Thiết lập font cho header và tiêu đề */
 h1 {
   text-align: center;
   margin-bottom: 20px;
-}
-
-/* Định dạng bảng */
-table {
-  width: 100%;
-  border-collapse: collapse;
+  font-family: 'Roboto', sans-serif; /* Thay đổi font chữ cho header */
+  color: #333; /* Đổi màu chữ của header */
 }
 
 /* Định dạng header của bảng */
 th {
   background-color: #f2f2f2;
-  padding: 8px;
-  text-align: left;
+  padding: 12px; /* Tăng khoảng cách lề của header */
+  text-align: center; /* Căn giữa nội dung trong header */
 }
 
 /* Định dạng dòng trong bảng */
 td {
   border-bottom: 1px solid #ddd;
-  padding: 8px;
+  padding: 12px; /* Tăng khoảng cách lề của dòng */
+  text-align: center; /* Căn giữa nội dung trong dòng */
 }
 
 /* Định dạng màu nền cho các dòng chẵn */
@@ -133,17 +121,25 @@ tbody tr:nth-child(even) {
   background-color: #f9f9f9;
 }
 
-.home {
-  height: 100vh;
-  width: calc(100% - 240px);
-  position: relative;
-  left: 240px;
-  background: var(--body-color);
-  transition: var(--tran-05);
+/* Định dạng cột Status */
+td:nth-child(6) select {
+  /* Thay đổi màu nền hoặc màu chữ để làm nổi bật */
+  background-color: #cbe5f9;
+  color: #333;
+  font-weight: bold; /* Làm đậm chữ */
+  padding: 8px;
 }
 
-.sidebar.close ~ .home {
-  width: calc(100% - 88px);
-  left: 88px;
+/* Tạo đường viền cho bảng */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  border: 1px solid #ddd;
+}
+
+/* Tạo đường viền cho cột */
+th,
+td {
+  border: 1px solid #ddd;
 }
 </style>

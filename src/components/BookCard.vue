@@ -2,8 +2,8 @@
   <div class="product">
     <img :src="bookdetails.thumbnail" alt="Book Title" class="product-image" />
     <div class="product-details">
-      <h2 class="title">Tên Sách: {{ bookdetails.name }}</h2>
-      <p class="author">Thể loại: {{ bookdetails.categoryName }}</p>
+      <h2 class="title">Tên: {{ bookdetails.name }}</h2>
+      <p class="author">Thương hiệu: {{ bookdetails.categoryName }}</p>
       <p class="description">Mô tả: {{ bookdetails.description }}</p>
       <p class="price">Giá: {{ bookdetails.price }} đ</p>
       <div class="quantity-section">

@@ -2,7 +2,6 @@
 import { ref } from 'vue'
 import { useRoute } from 'vue-router'
 import Header from '@/components/Header.vue'
-import Footer from '@/components/Footer.vue'
 
 import BookCard from '@/components/BookCard.vue'
 import orderService from '../services/order.service'
@@ -48,8 +47,6 @@ getBook(props.bookId)
     </div>
     <BookCard :initial-book="book" @submit:order="addToCart" />
   </div>
-
-  <Footer />
 </template>
 <style>
 /* CSS cho thông báo thành công */

@@ -56,7 +56,7 @@ if (orderData) {
 </script>
 
 
-<style>
+<style scoped>
 body {
   font-family: Arial, sans-serif;
   margin: 0;

@@ -4,6 +4,7 @@
     <input v-model="searchText" />
     <button id="searchButton">Tìm</button>
   </div>
+
   <main>
     <section
       class="product"
@@ -13,8 +14,8 @@
     >
       <img :src="book.thumbnail" alt="ảnh bìa" />
       <h2>{{ book.name }}</h2>
-      <p><strong>Giá:</strong> {{ book.price }}</p>
-      <button>Mua Ngay</button>
+      <p><strong>Giá:</strong> {{ book.price.toLocaleString('vi-VN') }}</p>
+      <button>Mua hàng</button>
     </section>
 
     <!-- Có thể thêm nhiều sản phẩm khác ở đây bằng cách sao chép đoạn mã section.product và chỉnh sửa thông tin -->
